@@ -28,9 +28,6 @@
         .main-title {
             font-size: 1.875rem;
             /* 30px */
-            font-weight: bold;
-            color: #111827;
-            /* gray-900 */
             margin-bottom: 0.5rem;
             /* 8px */
         }
@@ -47,10 +44,6 @@
         }
 
         .clear-button {
-            background-color: #ef4444;
-            /* red-500 */
-            color: white;
-            font-weight: bold;
             padding: 0.75rem 1.5rem;
             /* 12px 24px */
             border-radius: 0.5rem;
@@ -59,12 +52,6 @@
             cursor: pointer;
             transition: background-color 0.2s ease-in-out;
         }
-
-        .clear-button:hover {
-            background-color: #dc2626;
-            /* red-600 */
-        }
-
 
         .comparison-container {
             display: flex;
@@ -86,7 +73,6 @@
         }
 
         .viewer-column {
-            background-color: white;
             padding: 1.5rem;
             /* 24px */
             border-radius: 0.75rem;
@@ -106,12 +92,9 @@
         .viewer-title {
             font-size: 1.5rem;
             /* 24px */
-            font-weight: bold;
             text-align: center;
             margin-bottom: 1.5rem;
             /* 24px */
-            color: #1f2937;
-            /* gray-800 */
         }
 
         .blocks-display-area {
@@ -129,8 +112,6 @@
             /* gray-300 */
             border-radius: 0.5rem;
             /* 8px */
-            background-color: #f9fafb;
-            /* gray-50 */
         }
 
         .digit-group {
@@ -142,8 +123,6 @@
             border: 1px solid #e5e7eb;
             /* gray-200 */
             border-radius: 8px;
-            background-color: #f9fafb;
-            /* gray-50 */
             min-height: 240px;
             box-sizing: border-box;
         }
@@ -164,10 +143,7 @@
         .digit-label {
             font-size: 0.875rem;
             /* 14px */
-            color: #4b5563;
-            /* gray-600 */
             font-weight: 500;
-            text-align: center;
             margin-bottom: 4px;
         }
 
@@ -185,9 +161,6 @@
 
         .zero-display {
             font-size: 3rem;
-            font-weight: bold;
-            color: #9ca3af;
-            /* gray-400 */
             line-height: 1;
             margin: auto;
         }
@@ -203,72 +176,27 @@
         }
 
         .hundreds-unit {
-            width: 60px;
-            height: 60px;
-            background-color: #fee2e2;
-            /* red-100 */
-            border: 1px solid #fca5a5;
-            /* red-300 */
-            border-radius: 4px;
-            padding: 2px;
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            grid-template-rows: repeat(10, 1fr);
-            gap: 1px;
-            box-sizing: border-box;
+            /* Tailwind CSS で指定 */
         }
 
         .small-block-hundreds {
-            background-color: #ef4444;
-            /* red-500 */
-            border-radius: 1px;
+            /* Tailwind CSS で指定 */
         }
 
         .tens-unit {
-            width: 14px;
-            height: 90px;
-            background-color: #dbeafe;
-            /* blue-100 */
-            border: 1px solid #93c5fd;
-            /* blue-300 */
-            border-radius: 4px;
-            padding: 2px;
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-            align-items: center;
-            box-sizing: border-box;
+            /* Tailwind CSS で指定 */
         }
 
         .small-block-tens {
-            width: 8px;
-            height: 8px;
-            background-color: #3b82f6;
-            /* blue-500 */
-            border-radius: 1px;
+            /* Tailwind CSS で指定 */
         }
 
         .ones-unit {
-            width: 22px;
-            height: 22px;
-            background-color: #dcfce7;
-            /* green-100 薄い緑 */
-            border: 1px solid #86efac;
-            /* green-300 やや薄い緑 */
-            border-radius: 4px;
-            padding: 2px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-sizing: border-box;
+            /* Tailwind CSS で指定 */
         }
 
         .small-block-ones {
-            width: 14px;
-            height: 14px;
-            background-color: #22c55e;
-            /* green-500 濃い緑 */
-            border-radius: 2px;
+            /* Tailwind CSS で指定 */
         }
 
 
@@ -294,116 +222,112 @@
         }
 
 
-        .input-label {
-            display: block;
-            font-size: 0.875rem;
-            /* 14px */
-            font-weight: medium;
-            color: #374151;
-            /* gray-700 */
-            margin-bottom: 0.25rem;
-            /* 4px */
-        }
-
-        .number-input-field {
-            margin-top: 0.25rem;
-            /* 4px */
-            display: block;
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            /* 8px 12px */
-            background-color: white;
-            border: 1px solid #d1d5db;
-            /* gray-300 */
-            border-radius: 0.375rem;
-            /* 6px */
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        }
-
-        .error-message-text {
-            color: #ef4444;
-            /* red-500 */
-            font-size: 0.75rem;
-            /* 12px */
-            margin-top: 0.25rem;
-            /* 4px */
-            height: 20px;
-            /* 高さを確保 */
-        }
-
-        .helper-text {
-            font-size: 0.75rem;
-            /* 12px */
-            color: #6b7280;
-            /* gray-500 */
-            text-align: center;
-            margin-top: 1.5rem;
-            /* 24px */
-        }
     </style>
 </head>
 
 <body>
     <div class="page-container">
-        <h1 class="main-title">数値ブロック比較</h1>
+        <h1 class="main-title font-bold text-gray-900">数値ブロック比較</h1>
         <div class="clear-button-container">
-            <button id="clearAllButton" class="clear-button">全ての入力をクリア</button>
+            <button id="clearAllButton" class="clear-button font-bold text-white bg-red-400 hover:bg-red-600">全ての入力をクリア</button>
         </div>
 
         <div class="comparison-container">
-            <div class="viewer-column">
-                <h2 class="viewer-title">入力 1</h2>
-                <div class="blocks-display-area">
-                    <div class="digit-group hundreds-col-width">
-                        <span class="digit-label">百の位</span>
+            <div class="viewer-column bg-white">
+                <h2 class="viewer-title font-bold text-gray-800">入力 1</h2>
+                <div class="blocks-display-area bg-gray-50">
+                    <div class="digit-group bg-gray-50 hundreds-col-width">
+                        <span class="digit-label text-gray-600 text-center">百の位</span>
                         <div id="hundredsBlocksContainerLeft" class="blocks-container"></div>
                     </div>
-                    <div class="digit-group tens-col-width">
-                        <span class="digit-label">十の位</span>
+                    <div class="digit-group bg-gray-50 tens-col-width">
+                        <span class="digit-label text-gray-600 text-center">十の位</span>
                         <div id="tensBlocksContainerLeft" class="blocks-container"></div>
                     </div>
-                    <div class="digit-group ones-col-width">
-                        <span class="digit-label">一の位</span>
+                    <div class="digit-group bg-gray-50 ones-col-width">
+                        <span class="digit-label text-gray-600 text-center">一の位</span>
                         <div id="onesBlocksContainerLeft" class="blocks-container"></div>
                     </div>
                 </div>
                 <div>
-                    <label for="numberInputLeft" class="input-label">3桁の数値を入力:</label>
+                    <label for="numberInputLeft" class="block text-sm font-medium text-gray-700 mb-1">3桁の数値を入力:</label>
                     <input type="tel" id="numberInputLeft" inputmode="numeric" pattern="[0-9]*" maxlength="3"
-                        class="number-input-field">
-                    <p id="errorMessageLeft" class="error-message-text"></p>
+                        class="mt-1 block w-full py-2 px-3 bg-white border border-gray-300 rounded-md shadow-sm">
+                    <p id="errorMessageLeft" class="text-red-500 text-xs mt-1 h-5"></p>
                 </div>
-                <p class="helper-text">入力された数値の各桁に対応するブロックが表示されます。</p>
+                <p class="text-xs text-gray-500 text-center mt-6">入力された数値の各桁に対応するブロックが表示されます。</p>
             </div>
 
-            <div class="viewer-column">
-                <h2 class="viewer-title">入力 2</h2>
-                <div class="blocks-display-area">
-                    <div class="digit-group hundreds-col-width">
-                        <span class="digit-label">百の位</span>
+            <div class="viewer-column bg-white">
+                <h2 class="viewer-title font-bold text-gray-800">入力 2</h2>
+                <div class="blocks-display-area bg-gray-50">
+                    <div class="digit-group bg-gray-50 hundreds-col-width">
+                        <span class="digit-label text-gray-600 text-center">百の位</span>
                         <div id="hundredsBlocksContainerRight" class="blocks-container"></div>
                     </div>
-                    <div class="digit-group tens-col-width">
-                        <span class="digit-label">十の位</span>
+                    <div class="digit-group bg-gray-50 tens-col-width">
+                        <span class="digit-label text-gray-600 text-center">十の位</span>
                         <div id="tensBlocksContainerRight" class="blocks-container"></div>
                     </div>
-                    <div class="digit-group ones-col-width">
-                        <span class="digit-label">一の位</span>
+                    <div class="digit-group bg-gray-50 ones-col-width">
+                        <span class="digit-label text-gray-600 text-center">一の位</span>
                         <div id="onesBlocksContainerRight" class="blocks-container"></div>
                     </div>
                 </div>
                 <div>
-                    <label for="numberInputRight" class="input-label">3桁の数値を入力:</label>
+                    <label for="numberInputRight" class="block text-sm font-medium text-gray-700 mb-1">3桁の数値を入力:</label>
                     <input type="tel" id="numberInputRight" inputmode="numeric" pattern="[0-9]*" maxlength="3"
-                        class="number-input-field">
-                    <p id="errorMessageRight" class="error-message-text"></p>
+                        class="mt-1 block w-full py-2 px-3 bg-white border border-gray-300 rounded-md shadow-sm">
+                    <p id="errorMessageRight" class="text-red-500 text-xs mt-1 h-5"></p>
                 </div>
-                <p class="helper-text">入力された数値の各桁に対応するブロックが表示されます。</p>
+                <p class="text-xs text-gray-500 text-center mt-6">入力された数値の各桁に対応するブロックが表示されます。</p>
             </div>
         </div>
     </div>
 
     <script>
+        // 各桁のブロック生成に関する設定
+        const DIGIT_CONFIG = {
+            hundreds: {
+                wrapperClass: 'hundreds-wrapper',
+                unitClass: 'hundreds-unit bg-red-100 border border-red-300 w-[60px] h-[60px] rounded p-0.5 grid grid-cols-10 grid-rows-10 gap-px box-border',
+                smallBlockClass: 'small-block-hundreds bg-red-500 rounded-[1px]',
+                smallBlockCount: 100,             // 百の位の単位ブロック内に生成する小ブロックの数
+                populateUnit: (unit, smallBlockClass, count) => { // 単位ブロック内に小ブロックを生成する関数
+                    for (let j = 0; j < count; j++) {
+                        const smallBlock = document.createElement('div');
+                        smallBlock.className = smallBlockClass;
+                        unit.appendChild(smallBlock);
+                    }
+                }
+            },
+            tens: {
+                wrapperClass: 'tens-wrapper',
+                unitClass: 'tens-unit bg-blue-100 border border-blue-300 w-3.5 h-[90px] rounded p-0.5 flex flex-col items-center gap-px box-border',
+                smallBlockClass: 'small-block-tens bg-blue-500 w-2 h-2 rounded-[1px]',
+                smallBlockCount: 10,
+                populateUnit: (unit, smallBlockClass, count) => {
+                    for (let j = 0; j < count; j++) {
+                        const smallBlock = document.createElement('div');
+                        smallBlock.className = smallBlockClass;
+                        unit.appendChild(smallBlock);
+                    }
+                }
+            },
+            ones: {
+                wrapperClass: 'ones-wrapper',
+                unitClass: 'ones-unit bg-green-100 border border-green-300 w-[22px] h-[22px] rounded p-0.5 flex justify-center items-center box-border',
+                smallBlockClass: 'small-block-ones bg-green-500 w-3.5 h-3.5 rounded-sm',
+                smallBlockCount: 1, // 1の位はユニット自体が1つのブロックを表すため、内部に1つの視覚的要素を追加
+                populateUnit: (unit, smallBlockClass) => {
+                    const smallBlock = document.createElement('div'); // 1の位のユニット内部の視覚的ブロック
+                    smallBlock.className = smallBlockClass;
+                    unit.appendChild(smallBlock);
+                }
+            }
+        };
+        const ITEMS_PER_ROW = 5; // 1行に表示するアイテムの最大数
+
         /**
          * 指定されたコンテナに、数値に応じたブロックを生成して表示します。
          * @param {HTMLElement} mainContainer - ブロックを表示するメインのコンテナ要素。
@@ -420,7 +344,7 @@
             // 表示する数が0の場合、大きな「0」を表示して終了
             if (count === 0) {
                 const zeroDisplay = document.createElement('div');
-                zeroDisplay.className = 'zero-display';
+                zeroDisplay.className = 'zero-display font-bold text-gray-400';
                 zeroDisplay.textContent = '0';
                 mainContainer.appendChild(zeroDisplay);
                 // 「0」をコンテナの中央に配置するためのスタイル設定
@@ -430,69 +354,35 @@
                 return;
             }
 
+            const config = DIGIT_CONFIG[digitType]; // digitTypeに応じた設定を取得
+            if (!config) {
+                console.error(`無効な digitType: ${digitType}`);
+                return;
+            }
+
             // ブロック群全体をラップし、スケーリングの対象となるコンテナ
             const contentWrapper = document.createElement('div');
             contentWrapper.className = 'digit-content-wrapper';
 
             // 各桁のブロック/ユニットを行ごとにまとめるためのラッパー
             let specificWrapper = document.createElement('div');
+            specificWrapper.className = config.wrapperClass; // 設定からラッパークラスを設定
             let currentRow = null; // 現在の行要素を保持
-            const itemsPerRow = 5; // 1行に表示するアイテムの最大数
 
-            // 桁の種類に応じてブロック/ユニットを生成
-            if (digitType === 'hundreds') {
-                specificWrapper.className = 'hundreds-wrapper'; // 百の位用のラッパークラス
-                for (let i = 0; i < count; i++) {
-                    // 5個ごとに新しい行を開始
-                    if (i % itemsPerRow === 0) {
-                        currentRow = document.createElement('div');
-                        currentRow.className = 'block-row'; // 行用のクラス
-                        specificWrapper.appendChild(currentRow);
-                    }
-                    // 10x10のフラットユニットを生成
-                    const unit = document.createElement('div');
-                    unit.className = 'hundreds-unit';
-                    for (let j = 0; j < 100; j++) { // 100個の小ブロックを生成
-                        const smallBlock = document.createElement('div');
-                        smallBlock.className = 'small-block-hundreds';
-                        unit.appendChild(smallBlock);
-                    }
-                    currentRow.appendChild(unit); // 現在の行にユニットを追加
+            // 指定された個数だけユニットを生成
+            for (let i = 0; i < count; i++) {
+                // ITEMS_PER_ROW ごとに新しい行を開始
+                if (i % ITEMS_PER_ROW === 0) {
+                    currentRow = document.createElement('div');
+                    currentRow.className = 'block-row';
+                    specificWrapper.appendChild(currentRow);
                 }
-            } else if (digitType === 'tens') {
-                specificWrapper.className = 'tens-wrapper'; // 十の位用のラッパークラス
-                for (let i = 0; i < count; i++) {
-                    if (i % itemsPerRow === 0) {
-                        currentRow = document.createElement('div');
-                        currentRow.className = 'block-row';
-                        specificWrapper.appendChild(currentRow);
-                    }
-                    // 縦1x10のロッドユニットを生成
-                    const unit = document.createElement('div');
-                    unit.className = 'tens-unit';
-                    for (let j = 0; j < 10; j++) { // 10個の小ブロックを生成
-                        const smallBlock = document.createElement('div');
-                        smallBlock.className = 'small-block-tens';
-                        unit.appendChild(smallBlock);
-                    }
-                    currentRow.appendChild(unit);
-                }
-            } else if (digitType === 'ones') {
-                specificWrapper.className = 'ones-wrapper'; // 一の位用のラッパークラス
-                for (let i = 0; i < count; i++) {
-                    if (i % itemsPerRow === 0) {
-                        currentRow = document.createElement('div');
-                        currentRow.className = 'block-row';
-                        specificWrapper.appendChild(currentRow);
-                    }
-                    // 一の位のユニット（小ブロックを1つ含む）を生成
-                    const unit = document.createElement('div');
-                    unit.className = 'ones-unit';
-                    const smallBlock = document.createElement('div');
-                    smallBlock.className = 'small-block-ones';
-                    unit.appendChild(smallBlock);
-                    currentRow.appendChild(unit);
-                }
+                // ユニットを生成
+                const unit = document.createElement('div');
+                unit.className = config.unitClass; // 設定からユニットクラスを設定
+                // 設定に基づいてユニット内に小ブロックを生成
+                config.populateUnit(unit, config.smallBlockClass, config.smallBlockCount);
+                currentRow.appendChild(unit); // 現在の行にユニットを追加
             }
 
             // 生成された各桁のラッパーをスケーリング用ラッパーに追加
@@ -534,6 +424,13 @@
             });
         }
 
+            // ヘルパー関数: ビューアの全桁コンテナに "0" を表示する
+            function displayZeroInViewer(elements) {
+                generateDigitBlocks(elements.hundredsContainer, 0, 'hundreds');
+                generateDigitBlocks(elements.tensContainer, 0, 'tens');
+                generateDigitBlocks(elements.onesContainer, 0, 'ones');
+            }
+
         /**
          * 指定されたプレフィックスを持つ数値ブロックビューアのインスタンスを初期化します。
          * @param {string} instancePrefix - HTML要素のIDに使われるプレフィックス ('Left' または 'Right')。
@@ -558,25 +455,14 @@
 
                 // 入力が空の場合、全てのブロックをクリアして0を表示
                 if (value === '') {
-                    elements.hundredsContainer.innerHTML = '';
-                    elements.tensContainer.innerHTML = '';
-                    elements.onesContainer.innerHTML = '';
-                    generateDigitBlocks(elements.hundredsContainer, 0, 'hundreds');
-                    generateDigitBlocks(elements.tensContainer, 0, 'tens');
-                    generateDigitBlocks(elements.onesContainer, 0, 'ones');
+                    displayZeroInViewer(elements); // 0表示ヘルパー関数を呼び出し
                     return;
                 }
 
                 // 入力値のバリデーション (1〜3桁の数値か)
                 if (!/^\d{1,3}$/.test(value)) {
                     elements.errorMessageElement.textContent = '1桁から3桁の数値を入力してください。';
-                    // エラー時はブロックをクリアして0を表示
-                    elements.hundredsContainer.innerHTML = '';
-                    elements.tensContainer.innerHTML = '';
-                    elements.onesContainer.innerHTML = '';
-                    generateDigitBlocks(elements.hundredsContainer, 0, 'hundreds');
-                    generateDigitBlocks(elements.tensContainer, 0, 'tens');
-                    generateDigitBlocks(elements.onesContainer, 0, 'ones');
+                    displayZeroInViewer(elements); // 0表示ヘルパー関数を呼び出し
                     return;
                 }
 
@@ -585,12 +471,7 @@
                 // 数値の範囲バリデーション (0〜999)
                 if (isNaN(number) || number < 0 || number > 999) {
                     elements.errorMessageElement.textContent = '0から999までの数値を入力してください。';
-                    elements.hundredsContainer.innerHTML = '';
-                    elements.tensContainer.innerHTML = '';
-                    elements.onesContainer.innerHTML = '';
-                    generateDigitBlocks(elements.hundredsContainer, 0, 'hundreds');
-                    generateDigitBlocks(elements.tensContainer, 0, 'tens');
-                    generateDigitBlocks(elements.onesContainer, 0, 'ones');
+                    displayZeroInViewer(elements); // 0表示ヘルパー関数を呼び出し
                     return;
                 }
 
@@ -623,26 +504,15 @@
         const clearAllButton = document.getElementById('clearAllButton');
         // クリアボタンのクリックイベントにリスナーを設定
         clearAllButton.addEventListener('click', () => {
-            // 左側のビューアをクリア
-            viewerLeftElements.numberInput.value = ''; // 入力フィールドを空にする
-            // 各桁のブロックコンテナをクリアし、0のブロックを再描画
-            viewerLeftElements.hundredsContainer.innerHTML = '';
-            viewerLeftElements.tensContainer.innerHTML = '';
-            viewerLeftElements.onesContainer.innerHTML = '';
-            generateDigitBlocks(viewerLeftElements.hundredsContainer, 0, 'hundreds');
-            generateDigitBlocks(viewerLeftElements.tensContainer, 0, 'tens');
-            generateDigitBlocks(viewerLeftElements.onesContainer, 0, 'ones');
-            viewerLeftElements.errorMessageElement.textContent = ''; // エラーメッセージをクリア
+            // 左側のビューアをクリアしてリセット
+            viewerLeftElements.numberInput.value = '';
+            viewerLeftElements.errorMessageElement.textContent = '';
+            displayZeroInViewer(viewerLeftElements); // 0表示ヘルパー関数を呼び出し
 
-            // 右側のビューアをクリア (同様の処理)
+            // 右側のビューアをクリアしてリセット
             viewerRightElements.numberInput.value = '';
-            viewerRightElements.hundredsContainer.innerHTML = '';
-            viewerRightElements.tensContainer.innerHTML = '';
-            viewerRightElements.onesContainer.innerHTML = '';
-            generateDigitBlocks(viewerRightElements.hundredsContainer, 0, 'hundreds');
-            generateDigitBlocks(viewerRightElements.tensContainer, 0, 'tens');
-            generateDigitBlocks(viewerRightElements.onesContainer, 0, 'ones');
             viewerRightElements.errorMessageElement.textContent = '';
+            displayZeroInViewer(viewerRightElements); // 0表示ヘルパー関数を呼び出し
         });
 
     </script>
