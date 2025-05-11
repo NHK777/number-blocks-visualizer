@@ -248,10 +248,8 @@
             border-radius: 1px;
         }
 
-        /* 一の位の新しいスタイル */
         .ones-unit {
             width: 22px;
-            /* 外枠のサイズ */
             height: 22px;
             background-color: #dcfce7;
             /* green-100 薄い緑 */
@@ -259,9 +257,7 @@
             /* green-300 やや薄い緑 */
             border-radius: 4px;
             padding: 2px;
-            /* 内側のsmall-blockのためのパディング */
             display: flex;
-            /* 中央揃えのため */
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
@@ -269,7 +265,6 @@
 
         .small-block-ones {
             width: 14px;
-            /* 内側のブロックサイズ */
             height: 14px;
             background-color: #22c55e;
             /* green-500 濃い緑 */
@@ -296,7 +291,6 @@
 
         .ones-wrapper {
             /* (新しい .ones-unit 幅22px * 5) + (ギャップ8px * 4) = 110px + 32px = 142px */
-            /* max-width はスケーリングに任せるため、ここでは設定しない */
         }
 
 
@@ -410,59 +404,73 @@
     </div>
 
     <script>
-        // 共通のブロック生成ロジック
+        /**
+         * 指定されたコンテナに、数値に応じたブロックを生成して表示します。
+         * @param {HTMLElement} mainContainer - ブロックを表示するメインのコンテナ要素。
+         * @param {number} count - 表示するブロック/ユニットの数。
+         * @param {string} digitType - 桁の種類 ('hundreds', 'tens', 'ones')。
+         */
         function generateDigitBlocks(mainContainer, count, digitType) {
+            // コンテナの既存の内容をクリアし、スタイルをリセット
             mainContainer.innerHTML = '';
             mainContainer.style.display = '';
             mainContainer.style.alignItems = '';
             mainContainer.style.justifyContent = '';
 
+            // 表示する数が0の場合、大きな「0」を表示して終了
             if (count === 0) {
                 const zeroDisplay = document.createElement('div');
                 zeroDisplay.className = 'zero-display';
                 zeroDisplay.textContent = '0';
                 mainContainer.appendChild(zeroDisplay);
+                // 「0」をコンテナの中央に配置するためのスタイル設定
                 mainContainer.style.display = 'flex';
                 mainContainer.style.alignItems = 'center';
                 mainContainer.style.justifyContent = 'center';
                 return;
             }
 
+            // ブロック群全体をラップし、スケーリングの対象となるコンテナ
             const contentWrapper = document.createElement('div');
             contentWrapper.className = 'digit-content-wrapper';
 
+            // 各桁のブロック/ユニットを行ごとにまとめるためのラッパー
             let specificWrapper = document.createElement('div');
-            let currentRow = null;
-            const itemsPerRow = 5;
+            let currentRow = null; // 現在の行要素を保持
+            const itemsPerRow = 5; // 1行に表示するアイテムの最大数
 
+            // 桁の種類に応じてブロック/ユニットを生成
             if (digitType === 'hundreds') {
-                specificWrapper.className = 'hundreds-wrapper';
+                specificWrapper.className = 'hundreds-wrapper'; // 百の位用のラッパークラス
                 for (let i = 0; i < count; i++) {
+                    // 5個ごとに新しい行を開始
                     if (i % itemsPerRow === 0) {
                         currentRow = document.createElement('div');
-                        currentRow.className = 'block-row';
+                        currentRow.className = 'block-row'; // 行用のクラス
                         specificWrapper.appendChild(currentRow);
                     }
+                    // 10x10のフラットユニットを生成
                     const unit = document.createElement('div');
                     unit.className = 'hundreds-unit';
-                    for (let j = 0; j < 100; j++) {
+                    for (let j = 0; j < 100; j++) { // 100個の小ブロックを生成
                         const smallBlock = document.createElement('div');
                         smallBlock.className = 'small-block-hundreds';
                         unit.appendChild(smallBlock);
                     }
-                    currentRow.appendChild(unit);
+                    currentRow.appendChild(unit); // 現在の行にユニットを追加
                 }
             } else if (digitType === 'tens') {
-                specificWrapper.className = 'tens-wrapper';
+                specificWrapper.className = 'tens-wrapper'; // 十の位用のラッパークラス
                 for (let i = 0; i < count; i++) {
                     if (i % itemsPerRow === 0) {
                         currentRow = document.createElement('div');
                         currentRow.className = 'block-row';
                         specificWrapper.appendChild(currentRow);
                     }
+                    // 縦1x10のロッドユニットを生成
                     const unit = document.createElement('div');
                     unit.className = 'tens-unit';
-                    for (let j = 0; j < 10; j++) {
+                    for (let j = 0; j < 10; j++) { // 10個の小ブロックを生成
                         const smallBlock = document.createElement('div');
                         smallBlock.className = 'small-block-tens';
                         unit.appendChild(smallBlock);
@@ -470,55 +478,69 @@
                     currentRow.appendChild(unit);
                 }
             } else if (digitType === 'ones') {
-                specificWrapper.className = 'ones-wrapper';
+                specificWrapper.className = 'ones-wrapper'; // 一の位用のラッパークラス
                 for (let i = 0; i < count; i++) {
                     if (i % itemsPerRow === 0) {
                         currentRow = document.createElement('div');
                         currentRow.className = 'block-row';
                         specificWrapper.appendChild(currentRow);
                     }
-                    // 一の位のユニットと小ブロックを生成
+                    // 一の位のユニット（小ブロックを1つ含む）を生成
                     const unit = document.createElement('div');
                     unit.className = 'ones-unit';
                     const smallBlock = document.createElement('div');
                     smallBlock.className = 'small-block-ones';
                     unit.appendChild(smallBlock);
-                    currentRow.appendChild(unit); // 行にユニットを追加
+                    currentRow.appendChild(unit);
                 }
             }
 
+            // 生成された各桁のラッパーをスケーリング用ラッパーに追加
             contentWrapper.appendChild(specificWrapper);
+            // スケーリング用ラッパーをメインコンテナに追加
             mainContainer.appendChild(contentWrapper);
 
+            // DOM描画後にスケーリング処理を実行
             requestAnimationFrame(() => {
+                // メインコンテナの利用可能な幅と高さを取得 (paddingを考慮)
                 const availableWidth = mainContainer.clientWidth - parseFloat(getComputedStyle(mainContainer).paddingLeft) - parseFloat(getComputedStyle(mainContainer).paddingRight);
                 const availableHeight = mainContainer.clientHeight - parseFloat(getComputedStyle(mainContainer).paddingTop) - parseFloat(getComputedStyle(mainContainer).paddingBottom);
 
+                // スケーリング対象のコンテンツの実際の幅と高さを取得
                 const contentWidth = specificWrapper.scrollWidth;
                 const contentHeight = specificWrapper.scrollHeight;
 
-                let scaleFactor = 1;
+                let scaleFactor = 1; // 初期スケール係数
+
+                // コンテンツが利用可能領域を超える場合にスケール係数を計算
                 const needsHorizontalScale = contentWidth > availableWidth;
                 const needsVerticalScale = contentHeight > availableHeight;
 
                 if (needsHorizontalScale || needsVerticalScale) {
                     const scaleX = (needsHorizontalScale && availableWidth > 0 && contentWidth > 0) ? availableWidth / contentWidth : 1;
                     const scaleY = (needsVerticalScale && availableHeight > 0 && contentHeight > 0) ? availableHeight / contentHeight : 1;
-                    scaleFactor = Math.min(scaleX, scaleY, 1);
+                    scaleFactor = Math.min(scaleX, scaleY, 1); // 縦横で小さい方のスケールを採用し、1を超えないようにする
                 }
 
+                // 極端に小さくなりすぎないように最小スケールを設定
                 scaleFactor = Math.max(scaleFactor, 0.1);
 
+                // 計算されたスケールを適用 (1未満の場合のみ)
                 if (scaleFactor < 1) {
                     contentWrapper.style.transform = `scale(${scaleFactor})`;
                 } else {
-                    contentWrapper.style.transform = 'scale(1)';
+                    contentWrapper.style.transform = 'scale(1)'; // スケーリング不要な場合は等倍
                 }
             });
         }
 
-        // Function to initialize a viewer instance
+        /**
+         * 指定されたプレフィックスを持つ数値ブロックビューアのインスタンスを初期化します。
+         * @param {string} instancePrefix - HTML要素のIDに使われるプレフィックス ('Left' または 'Right')。
+         * @returns {object} このインスタンスに関連するHTML要素のオブジェクト。
+         */
         function initializeViewer(instancePrefix) {
+            // 各インスタンスのHTML要素を取得
             const elements = {
                 numberInput: document.getElementById(`numberInput${instancePrefix}`),
                 hundredsContainer: document.getElementById(`hundredsBlocksContainer${instancePrefix}`),
@@ -527,9 +549,14 @@
                 errorMessageElement: document.getElementById(`errorMessage${instancePrefix}`)
             };
 
+            /**
+             * このインスタンスのブロック表示を更新します。
+             * @param {string} value - 入力フィールドの値。
+             */
             function updateInstanceBlocks(value) {
-                elements.errorMessageElement.textContent = '';
+                elements.errorMessageElement.textContent = ''; // エラーメッセージをクリア
 
+                // 入力が空の場合、全てのブロックをクリアして0を表示
                 if (value === '') {
                     elements.hundredsContainer.innerHTML = '';
                     elements.tensContainer.innerHTML = '';
@@ -540,8 +567,10 @@
                     return;
                 }
 
+                // 入力値のバリデーション (1〜3桁の数値か)
                 if (!/^\d{1,3}$/.test(value)) {
                     elements.errorMessageElement.textContent = '1桁から3桁の数値を入力してください。';
+                    // エラー時はブロックをクリアして0を表示
                     elements.hundredsContainer.innerHTML = '';
                     elements.tensContainer.innerHTML = '';
                     elements.onesContainer.innerHTML = '';
@@ -551,8 +580,9 @@
                     return;
                 }
 
-                const number = parseInt(value, 10);
+                const number = parseInt(value, 10); // 文字列を数値に変換
 
+                // 数値の範囲バリデーション (0〜999)
                 if (isNaN(number) || number < 0 || number > 999) {
                     elements.errorMessageElement.textContent = '0から999までの数値を入力してください。';
                     elements.hundredsContainer.innerHTML = '';
@@ -564,37 +594,47 @@
                     return;
                 }
 
+                // 各桁の数を計算
                 const hundreds = Math.floor(number / 100);
                 const tens = Math.floor((number % 100) / 10);
                 const ones = number % 10;
 
+                // 各桁のブロックを生成・表示
                 generateDigitBlocks(elements.hundredsContainer, hundreds, 'hundreds');
                 generateDigitBlocks(elements.tensContainer, tens, 'tens');
                 generateDigitBlocks(elements.onesContainer, ones, 'ones');
             }
 
+            // 入力フィールドのinputイベントにリスナーを設定
             elements.numberInput.addEventListener('input', () => {
                 updateInstanceBlocks(elements.numberInput.value);
             });
 
+            // 初期表示（"0"で初期化して0のブロックを表示）
             updateInstanceBlocks("0");
-            return elements;
+            return elements; // クリアボタン機能のために要素の参照を返す
         }
 
+        // 左右両方のビューアを初期化
         const viewerLeftElements = initializeViewer('Left');
         const viewerRightElements = initializeViewer('Right');
 
+        // 「全ての入力をクリア」ボタンの要素を取得
         const clearAllButton = document.getElementById('clearAllButton');
+        // クリアボタンのクリックイベントにリスナーを設定
         clearAllButton.addEventListener('click', () => {
-            viewerLeftElements.numberInput.value = '';
+            // 左側のビューアをクリア
+            viewerLeftElements.numberInput.value = ''; // 入力フィールドを空にする
+            // 各桁のブロックコンテナをクリアし、0のブロックを再描画
             viewerLeftElements.hundredsContainer.innerHTML = '';
             viewerLeftElements.tensContainer.innerHTML = '';
             viewerLeftElements.onesContainer.innerHTML = '';
             generateDigitBlocks(viewerLeftElements.hundredsContainer, 0, 'hundreds');
             generateDigitBlocks(viewerLeftElements.tensContainer, 0, 'tens');
             generateDigitBlocks(viewerLeftElements.onesContainer, 0, 'ones');
-            viewerLeftElements.errorMessageElement.textContent = '';
+            viewerLeftElements.errorMessageElement.textContent = ''; // エラーメッセージをクリア
 
+            // 右側のビューアをクリア (同様の処理)
             viewerRightElements.numberInput.value = '';
             viewerRightElements.hundredsContainer.innerHTML = '';
             viewerRightElements.tensContainer.innerHTML = '';
