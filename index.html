@@ -75,7 +75,6 @@
             width: 100%;
             max-width: 80rem;
             /* 1280px, 2つのビューアを並べるため広めに */
-            /* margin-left: auto; margin-right: auto; は page-container で制御 */
         }
 
         @media (min-width: 1024px) {
@@ -207,7 +206,9 @@
             width: 60px;
             height: 60px;
             background-color: #fee2e2;
+            /* red-100 */
             border: 1px solid #fca5a5;
+            /* red-300 */
             border-radius: 4px;
             padding: 2px;
             display: grid;
@@ -219,6 +220,7 @@
 
         .small-block-hundreds {
             background-color: #ef4444;
+            /* red-500 */
             border-radius: 1px;
         }
 
@@ -226,7 +228,9 @@
             width: 14px;
             height: 90px;
             background-color: #dbeafe;
+            /* blue-100 */
             border: 1px solid #93c5fd;
+            /* blue-300 */
             border-radius: 4px;
             padding: 2px;
             display: flex;
@@ -240,16 +244,38 @@
             width: 8px;
             height: 8px;
             background-color: #3b82f6;
+            /* blue-500 */
             border-radius: 1px;
         }
 
-        .ones-block {
-            width: 18px;
-            height: 18px;
-            background-color: #22c55e;
+        /* 一の位の新しいスタイル */
+        .ones-unit {
+            width: 22px;
+            /* 外枠のサイズ */
+            height: 22px;
+            background-color: #dcfce7;
+            /* green-100 薄い緑 */
+            border: 1px solid #86efac;
+            /* green-300 やや薄い緑 */
             border-radius: 4px;
+            padding: 2px;
+            /* 内側のsmall-blockのためのパディング */
+            display: flex;
+            /* 中央揃えのため */
+            justify-content: center;
+            align-items: center;
             box-sizing: border-box;
         }
+
+        .small-block-ones {
+            width: 14px;
+            /* 内側のブロックサイズ */
+            height: 14px;
+            background-color: #22c55e;
+            /* green-500 濃い緑 */
+            border-radius: 2px;
+        }
+
 
         .hundreds-wrapper,
         .tens-wrapper,
@@ -267,6 +293,12 @@
             gap: 8px;
             width: auto;
         }
+
+        .ones-wrapper {
+            /* (新しい .ones-unit 幅22px * 5) + (ギャップ8px * 4) = 110px + 32px = 142px */
+            /* max-width はスケーリングに任せるため、ここでは設定しない */
+        }
+
 
         .input-label {
             display: block;
@@ -292,7 +324,6 @@
             border-radius: 0.375rem;
             /* 6px */
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            /* appearance: none; Safariでの余計な装飾を消す場合 */
         }
 
         .error-message-text {
@@ -379,7 +410,7 @@
     </div>
 
     <script>
-        // 共通のブロック生成ロジック (変更なし)
+        // 共通のブロック生成ロジック
         function generateDigitBlocks(mainContainer, count, digitType) {
             mainContainer.innerHTML = '';
             mainContainer.style.display = '';
@@ -446,9 +477,13 @@
                         currentRow.className = 'block-row';
                         specificWrapper.appendChild(currentRow);
                     }
-                    const block = document.createElement('div');
-                    block.className = 'ones-block';
-                    currentRow.appendChild(block);
+                    // 一の位のユニットと小ブロックを生成
+                    const unit = document.createElement('div');
+                    unit.className = 'ones-unit';
+                    const smallBlock = document.createElement('div');
+                    smallBlock.className = 'small-block-ones';
+                    unit.appendChild(smallBlock);
+                    currentRow.appendChild(unit); // 行にユニットを追加
                 }
             }
 
@@ -542,19 +577,15 @@
                 updateInstanceBlocks(elements.numberInput.value);
             });
 
-            // 初期表示（"0"で初期化して0のブロックを表示）
             updateInstanceBlocks("0");
-            return elements; // クリアボタン用に要素を返す
+            return elements;
         }
 
-        // Initialize both viewers
         const viewerLeftElements = initializeViewer('Left');
         const viewerRightElements = initializeViewer('Right');
 
-        // Clear All Button functionality
         const clearAllButton = document.getElementById('clearAllButton');
         clearAllButton.addEventListener('click', () => {
-            // Clear left viewer
             viewerLeftElements.numberInput.value = '';
             viewerLeftElements.hundredsContainer.innerHTML = '';
             viewerLeftElements.tensContainer.innerHTML = '';
@@ -564,8 +595,6 @@
             generateDigitBlocks(viewerLeftElements.onesContainer, 0, 'ones');
             viewerLeftElements.errorMessageElement.textContent = '';
 
-
-            // Clear right viewer
             viewerRightElements.numberInput.value = '';
             viewerRightElements.hundredsContainer.innerHTML = '';
             viewerRightElements.tensContainer.innerHTML = '';
