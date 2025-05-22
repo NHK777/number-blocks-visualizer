@@ -269,14 +269,14 @@
 
 <body>
     <div class="page-container">
-        <div class="flex items-center justify-between w-full max-w-4xl mb-4"> <!-- タイトルとボタンを囲むdiv -->
-            <h1 class="main-title font-bold text-gray-900 text-2xl">数値ブロック比較</h1> <!-- text-2xl に少しサイズ調整 -->
-            <div id="modeSwitcher" class="flex gap-2">
+        <div class="relative w-full max-w-5xl mb-4 px-4"> <!-- 親コンテナ: 幅を少し広げ(max-w-5xl)、相対配置の基準とする。左右にpaddingを追加 -->
+            <h1 class="main-title font-bold text-gray-900 text-2xl text-center py-2">数値ブロック比較</h1> <!-- タイトル: 中央寄せ、上下padding -->
+            <div id="modeSwitcher" class="flex gap-2 absolute top-1/2 right-4 transform -translate-y-1/2"> <!-- モード切替: 右上に絶対配置、垂直中央揃え -->
                 <button id="inputModeButton" class="mode-button active-mode-button">入力モード</button>
                 <button id="gameModeSwitchButton" class="mode-button">ゲームモード</button>
             </div>
         </div>
-        <div class="clear-button-container"> <!-- この要素はタイトルコンテナの外に -->
+        <div class="clear-button-container">
             <button id="clearAllButton" class="clear-button font-bold text-white bg-red-400 hover:bg-red-600">全ての入力をクリア</button>
         </div>
 
@@ -608,6 +608,53 @@
         let leftValue = 0;
         let rightValue = 0;
 
+        let audioContext; // Web Audio APIのAudioContext
+
+        // ユーザーインタラクション時にAudioContextを初期化/再開する関数
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        // 効果音を再生する関数
+        function playSound(type) {
+            if (!audioContext) return; // AudioContextがなければ何もしない
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); // 音量小さめ
+
+            if (type === 'correct') {
+                oscillator.frequency.setValueAtTime(660, audioContext.currentTime); // 高めの音 (A5)
+                oscillator.type = 'sine';
+                setTimeout(() => { // 短く鳴らす
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                }, 50); // 50ms後に発声開始、0.1秒持続
+            } else if (type === 'incorrect') {
+                oscillator.frequency.setValueAtTime(330, audioContext.currentTime); // 低めの音 (E4)
+                oscillator.type = 'square';
+                 setTimeout(() => { // 少し長く
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                }, 50); // 50ms後に発声開始、0.2秒持続
+            }
+            
+            // oscillator.start() は setTimeout の中で呼ぶことで、
+            // resume() の直後に start() が呼ばれるケースを避ける（タイミング問題の緩和）
+            setTimeout(() => {
+                 if (audioContext.state === 'running') { // AudioContextが実際に動作しているか確認
+                    oscillator.start(audioContext.currentTime);
+                 }
+            }, 50);
+        }
+
         // ゲーム設定
         const TOTAL_QUESTIONS = 10;
 
@@ -664,11 +711,18 @@
             }
         }
 
-        inputModeButton.addEventListener('click', () => switchToMode('input'));
-        gameModeSwitchButton.addEventListener('click', () => switchToMode('game'));
+        inputModeButton.addEventListener('click', () => {
+            initAudioContext(); // AudioContextを初期化/再開
+            switchToMode('input');
+        });
+        gameModeSwitchButton.addEventListener('click', () => {
+            initAudioContext(); // AudioContextを初期化/再開
+            switchToMode('game');
+        });
 
         // ゲーム開始処理
         function startGame() {
+            initAudioContext(); // AudioContextを初期化/再開
             currentQuestionNumber = 1;
             score = 0;
             gameActive = true;
@@ -708,12 +762,33 @@
             questionCounter.textContent = `問題 ${currentQuestionNumber}/${TOTAL_QUESTIONS}`;
             feedbackArea.textContent = ''; // 前の問題のフィードバックをクリア
 
-            // 0から999までのランダムな数値を2つ生成
+            // 左側の値をランダムに生成
             leftValue = getRandomInt(0, 999);
-            rightValue = getRandomInt(0, 999);
+
+            // leftValue の各桁を取得
+            const leftHundreds = Math.floor(leftValue / 100);
+            const leftTens = Math.floor((leftValue % 100) / 10);
+            const leftOnes = leftValue % 10;
+
+            // 右側の値の各桁を leftValue の各桁±2の範囲で生成する関数
+            function getNearbyDigit(digit) {
+                const minDigitVal = Math.max(0, digit - 2);
+                const maxDigitVal = Math.min(9, digit + 2);
+                return getRandomInt(minDigitVal, maxDigitVal);
+            }
+
+            const rightHundreds = getNearbyDigit(leftHundreds);
+            const rightTens = getNearbyDigit(leftTens);
+            const rightOnes = getNearbyDigit(leftOnes);
+            
+            // 各桁から rightValue を再構成
+            rightValue = rightHundreds * 100 + rightTens * 10 + rightOnes;
+
+            // デバッグ用: 生成された値をコンソールに出力 (任意)
+            // console.log(`Left: ${leftValue} (H:${leftHundreds} T:${leftTens} O:${leftOnes}), Right: ${rightValue} (H:${rightHundreds} T:${rightTens} O:${rightOnes})`);
 
             // 稀に同じ数値になる場合があるが、今回は許容する (equalButtonで対応)
-            // もし必ず異なる数値にしたい場合は、ここで再生成のロジックを追加
+            // もし必ず異なる数値にしたい場合は、ここで leftValue === rightValue なら再生成するロジックを追加
 
             // gameArea をクリア
             gameArea.innerHTML = '';
@@ -823,6 +898,7 @@
                 score++;
                 feedbackArea.textContent = '正解！';
                 feedbackArea.className = 'mt-2 text-md text-green-600 font-semibold h-8';
+                playSound('correct'); // 正解音を再生
             } else {
                 let feedbackText = '不正解。';
                 if (correctAnswer === 'left') {
@@ -834,6 +910,7 @@
                 }
                 feedbackArea.textContent = feedbackText;
                 feedbackArea.className = 'mt-2 text-md text-red-600 font-semibold h-8';
+                playSound('incorrect'); // 不正解音を再生
             }
 
             currentQuestionNumber++;
@@ -875,9 +952,18 @@
         }
 
         // 回答ボタンのイベントリスナー
-        leftLargerButton.addEventListener('click', () => handleUserAnswer('left'));
-        equalButton.addEventListener('click', () => handleUserAnswer('equal'));
-        rightLargerButton.addEventListener('click', () => handleUserAnswer('right'));
+        leftLargerButton.addEventListener('click', () => {
+            initAudioContext(); // AudioContextを初期化/再開
+            handleUserAnswer('left');
+        });
+        equalButton.addEventListener('click', () => {
+            initAudioContext(); // AudioContextを初期化/再開
+            handleUserAnswer('equal');
+        });
+        rightLargerButton.addEventListener('click', () => {
+            initAudioContext(); // AudioContextを初期化/再開
+            handleUserAnswer('right');
+        });
 
         // 初期表示設定: デフォルトは入力モード
         document.addEventListener('DOMContentLoaded', () => {
