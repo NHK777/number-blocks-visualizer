@@ -221,18 +221,66 @@
             /* (新しい .ones-unit 幅22px * 5) + (ギャップ8px * 4) = 110px + 32px = 142px */
         }
 
+        /* モード切替ボタンのスタイル */
+        .mode-button {
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            border-radius: 0.375rem; /* rounded-md */
+            border: 1px solid #d1d5db; /* border-gray-300 */
+            background-color: #ffffff; /* bg-white */
+            color: #374151; /* text-gray-700 */
+            font-weight: 600; /* font-semibold */
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .mode-button:hover {
+            background-color: #f3f4f6; /* hover:bg-gray-100 */
+            border-color: #9ca3af; /* hover:border-gray-400 */
+        }
+
+        .active-mode-button {
+            background-color: #3b82f6; /* bg-blue-500 */
+            color: #ffffff; /* text-white */
+            border-color: #3b82f6; /* border-blue-500 */
+        }
+
+        .active-mode-button:hover {
+            background-color: #2563eb; /* hover:bg-blue-600 */
+            border-color: #2563eb; /* hover:border-blue-600 */
+        }
+
+        /* タイトルセクションの調整 */
+        .main-title {
+            /* font-size: 1.875rem; は維持しつつ、Tailwindの text-2xl (1.5rem) との整合性を確認 */
+            /* HTML側で text-2xl に変更したので、ここでの重複指定は不要か、または意図したサイズに合わせる */
+            /* 今回はHTML側の text-2xl を優先し、ここでの main-title の font-size 指定をコメントアウトまたは削除 */
+            /* font-size: 1.875rem; */ 
+            margin-bottom: 0; /* flex コンテナによる間隔調整のため、元々のマージンをリセット */
+        }
+
+        /* clear-button-container のマージン調整 */
+        .clear-button-container {
+            margin-bottom: 1rem; /* 元の 1.5rem から少し減らす */
+            /* max-width は維持 */
+        }
 
     </style>
 </head>
 
 <body>
     <div class="page-container">
-        <h1 class="main-title font-bold text-gray-900">数値ブロック比較</h1>
-        <div class="clear-button-container">
+        <div class="flex items-center justify-between w-full max-w-4xl mb-4"> <!-- タイトルとボタンを囲むdiv -->
+            <h1 class="main-title font-bold text-gray-900 text-2xl">数値ブロック比較</h1> <!-- text-2xl に少しサイズ調整 -->
+            <div id="modeSwitcher" class="flex gap-2">
+                <button id="inputModeButton" class="mode-button active-mode-button">入力モード</button>
+                <button id="gameModeSwitchButton" class="mode-button">ゲームモード</button>
+            </div>
+        </div>
+        <div class="clear-button-container"> <!-- この要素はタイトルコンテナの外に -->
             <button id="clearAllButton" class="clear-button font-bold text-white bg-red-400 hover:bg-red-600">全ての入力をクリア</button>
         </div>
 
-        <div class="comparison-container">
+        <div id="inputModeContainer" class="comparison-container">
             <div class="viewer-column bg-white">
                 <h2 class="viewer-title font-bold text-gray-800">入力 1</h2>
                 <div class="blocks-display-area bg-gray-50">
@@ -539,6 +587,9 @@
         const gameModeContainer = document.getElementById('gameModeContainer');
         const startGameButton = document.getElementById('startGameButton');
         const gameArea = document.getElementById('gameArea');
+        const inputModeContainer = document.getElementById('inputModeContainer'); // 追加
+        const inputModeButton = document.getElementById('inputModeButton');       // 追加
+        const gameModeSwitchButton = document.getElementById('gameModeSwitchButton'); // 追加
         const questionCounter = document.getElementById('questionCounter');
         const leftLargerButton = document.getElementById('leftLargerButton');
         const rightLargerButton = document.getElementById('rightLargerButton');
@@ -560,28 +611,85 @@
         // ゲーム設定
         const TOTAL_QUESTIONS = 10;
 
+        // モード切替処理
+        function switchToMode(mode) {
+            if (mode === 'input') {
+                // 入力モード表示
+                inputModeContainer.classList.remove('hidden');
+                if (clearAllMainButtonContainer) clearAllMainButtonContainer.classList.remove('hidden'); // クリアボタンも表示
+
+                // ゲームモード非表示
+                gameModeContainer.classList.add('hidden');
+                
+                // ボタンのアクティブ状態更新
+                inputModeButton.classList.add('active-mode-button');
+                gameModeSwitchButton.classList.remove('active-mode-button');
+
+                // もしゲームが進行中だった場合のリセット処理 (今回はシンプルにゲーム開始ボタンを再表示)
+                if (gameActive) {
+                    gameActive = false; // ゲーム状態をリセット
+                    // UIリセット (endGameの一部ロジックを参考に)
+                    questionCounter.textContent = '';
+                    feedbackArea.textContent = '';
+                    resultArea.textContent = '';
+                    leftLargerButton.classList.add('hidden');
+                    rightLargerButton.classList.add('hidden');
+                    equalButton.classList.add('hidden');
+                    startGameButton.textContent = 'ゲーム開始';
+                    startGameButton.classList.remove('hidden');
+                }
+
+            } else if (mode === 'game') {
+                // 入力モード非表示
+                inputModeContainer.classList.add('hidden');
+                if (clearAllMainButtonContainer) clearAllMainButtonContainer.classList.add('hidden');
+
+                // ゲームモード表示 (ゲーム開始ボタンを表示する状態)
+                gameModeContainer.classList.remove('hidden');
+                startGameButton.textContent = 'ゲーム開始';
+                startGameButton.classList.remove('hidden'); // ゲーム開始ボタンを表示
+                
+                // ゲーム画面の要素はstartGameが呼ばれるまで非表示に保つか、ここで初期状態に戻す
+                questionCounter.textContent = '';
+                feedbackArea.textContent = '';
+                resultArea.textContent = '';
+                leftLargerButton.classList.add('hidden');
+                rightLargerButton.classList.add('hidden');
+                equalButton.classList.add('hidden');
+                gameArea.innerHTML = ''; // ゲーム表示エリアをクリア
+
+                // ボタンのアクティブ状態更新
+                inputModeButton.classList.remove('active-mode-button');
+                gameModeSwitchButton.classList.add('active-mode-button');
+            }
+        }
+
+        inputModeButton.addEventListener('click', () => switchToMode('input'));
+        gameModeSwitchButton.addEventListener('click', () => switchToMode('game'));
+
         // ゲーム開始処理
         function startGame() {
             currentQuestionNumber = 1;
             score = 0;
             gameActive = true;
 
-            // 既存の比較ツールを非表示 (任意)
-            // 最初の comparison-container が対象となるように調整
-            const allComparisonContainers = document.querySelectorAll('.comparison-container');
-            if (allComparisonContainers.length > 0) {
-                allComparisonContainers[0].classList.add('hidden');
-            }
-            if (clearAllMainButtonContainer) clearAllMainButtonContainer.classList.add('hidden');
+            // // 既存の比較ツールを非表示 (switchToMode('game') で対応される)
+            // if (inputModeContainer) inputModeContainer.classList.add('hidden');
+            // if (clearAllMainButtonContainer) clearAllMainButtonContainer.classList.add('hidden');
             
-            // ゲームモードコンテナ表示
-            gameModeContainer.classList.remove('hidden');
+            // // ゲームモードコンテナ表示 (switchToMode('game') で対応される)
+            // gameModeContainer.classList.remove('hidden');
+
+            // UIの更新
             startGameButton.classList.add('hidden'); // スタートボタンを隠す
             leftLargerButton.classList.remove('hidden');
             rightLargerButton.classList.remove('hidden');
             equalButton.classList.remove('hidden');
-            resultArea.textContent = ''; // 前回の結果をクリア
-            feedbackArea.textContent = ''; // 前回のフィードバックをクリア
+            resultArea.textContent = ''; 
+            feedbackArea.textContent = ''; 
+
+            // inputModeButton.classList.remove('active-mode-button'); // モード切替はswitchToModeに任せる
+            // gameModeSwitchButton.classList.add('active-mode-button'); // モード切替はswitchToModeに任せる
 
             generateQuestion();
         }
@@ -754,12 +862,16 @@
             leftLargerButton.classList.add('hidden');
             rightLargerButton.classList.add('hidden');
             equalButton.classList.add('hidden');
-            startGameButton.textContent = 'もう一度プレイ'; // ボタンのテキストを変更
-            startGameButton.classList.remove('hidden'); // スタートボタンを再表示
+            startGameButton.textContent = 'もう一度プレイ'; 
+            startGameButton.classList.remove('hidden'); 
 
-            // 元の比較ツールを再表示する場合
-            if (mainComparisonContainer) mainComparisonContainer.classList.remove('hidden');
-            if (clearAllMainButtonContainer) clearAllMainButtonContainer.classList.remove('hidden');
+            // // 元の比較ツールを再表示する処理は、モード切替ボタンに役割を移譲するため削除
+            // if (inputModeContainer) inputModeContainer.classList.remove('hidden'); 
+            // if (clearAllMainButtonContainer) clearAllMainButtonContainer.classList.remove('hidden');
+
+            // // ボタンのアクティブ状態も、ユーザーがモード切替ボタンを押した際に更新される
+            // inputModeButton.classList.add('active-mode-button');
+            // gameModeSwitchButton.classList.remove('active-mode-button');
         }
 
         // 回答ボタンのイベントリスナー
@@ -767,6 +879,15 @@
         equalButton.addEventListener('click', () => handleUserAnswer('equal'));
         rightLargerButton.addEventListener('click', () => handleUserAnswer('right'));
 
+        // 初期表示設定: デフォルトは入力モード
+        document.addEventListener('DOMContentLoaded', () => {
+            switchToMode('input'); 
+            // 既存のビューアの初期化もここで行うのが適切かもしれない
+            // initializeViewer('Left');
+            // initializeViewer('Right');
+            // ただし、initializeViewerは既にグローバルスコープで呼び出されているので、
+            // ここではswitchToMode('input')だけで良い。
+        });
     </script>
 
 </body>
