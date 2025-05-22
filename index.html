@@ -346,7 +346,7 @@
                 <button id="equalButton" class="clear-button font-bold text-white bg-yellow-500 hover:bg-yellow-700 hidden">等しい</button>            
                 <button id="rightLargerButton" class="clear-button font-bold text-white bg-blue-500 hover:bg-blue-700 hidden">右が大きい</button>
             </div>
-            <div id="feedbackArea" class="mt-2 text-md text-gray-700 h-8"></div>
+            <div id="feedbackArea" class="mt-2 text-xl text-gray-700 h-10"></div>
         </div>
         <div id="resultArea" class="mt-4 text-xl font-bold text-gray-800"></div>
     </div>
@@ -608,53 +608,6 @@
         let leftValue = 0;
         let rightValue = 0;
 
-        let audioContext; // Web Audio APIのAudioContext
-
-        // ユーザーインタラクション時にAudioContextを初期化/再開する関数
-        function initAudioContext() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-        }
-
-        // 効果音を再生する関数
-        function playSound(type) {
-            if (!audioContext) return; // AudioContextがなければ何もしない
-
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); // 音量小さめ
-
-            if (type === 'correct') {
-                oscillator.frequency.setValueAtTime(660, audioContext.currentTime); // 高めの音 (A5)
-                oscillator.type = 'sine';
-                setTimeout(() => { // 短く鳴らす
-                    oscillator.stop(audioContext.currentTime + 0.1);
-                }, 50); // 50ms後に発声開始、0.1秒持続
-            } else if (type === 'incorrect') {
-                oscillator.frequency.setValueAtTime(330, audioContext.currentTime); // 低めの音 (E4)
-                oscillator.type = 'square';
-                 setTimeout(() => { // 少し長く
-                    oscillator.stop(audioContext.currentTime + 0.2);
-                }, 50); // 50ms後に発声開始、0.2秒持続
-            }
-            
-            // oscillator.start() は setTimeout の中で呼ぶことで、
-            // resume() の直後に start() が呼ばれるケースを避ける（タイミング問題の緩和）
-            setTimeout(() => {
-                 if (audioContext.state === 'running') { // AudioContextが実際に動作しているか確認
-                    oscillator.start(audioContext.currentTime);
-                 }
-            }, 50);
-        }
-
         // ゲーム設定
         const TOTAL_QUESTIONS = 10;
 
@@ -712,17 +665,14 @@
         }
 
         inputModeButton.addEventListener('click', () => {
-            initAudioContext(); // AudioContextを初期化/再開
             switchToMode('input');
         });
         gameModeSwitchButton.addEventListener('click', () => {
-            initAudioContext(); // AudioContextを初期化/再開
             switchToMode('game');
         });
 
         // ゲーム開始処理
         function startGame() {
-            initAudioContext(); // AudioContextを初期化/再開
             currentQuestionNumber = 1;
             score = 0;
             gameActive = true;
@@ -897,8 +847,7 @@
             if (userChoice === correctAnswer) {
                 score++;
                 feedbackArea.textContent = '正解！';
-                feedbackArea.className = 'mt-2 text-md text-green-600 font-semibold h-8';
-                playSound('correct'); // 正解音を再生
+                feedbackArea.className = 'mt-2 text-xl text-green-600 font-semibold h-10';
             } else {
                 let feedbackText = '不正解。';
                 if (correctAnswer === 'left') {
@@ -909,8 +858,7 @@
                     feedbackText += `正解は「等しい」でした (${leftValue} vs ${rightValue})。`;
                 }
                 feedbackArea.textContent = feedbackText;
-                feedbackArea.className = 'mt-2 text-md text-red-600 font-semibold h-8';
-                playSound('incorrect'); // 不正解音を再生
+                feedbackArea.className = 'mt-2 text-xl text-red-600 font-semibold h-10';
             }
 
             currentQuestionNumber++;
@@ -953,15 +901,12 @@
 
         // 回答ボタンのイベントリスナー
         leftLargerButton.addEventListener('click', () => {
-            initAudioContext(); // AudioContextを初期化/再開
             handleUserAnswer('left');
         });
         equalButton.addEventListener('click', () => {
-            initAudioContext(); // AudioContextを初期化/再開
             handleUserAnswer('equal');
         });
         rightLargerButton.addEventListener('click', () => {
-            initAudioContext(); // AudioContextを初期化/再開
             handleUserAnswer('right');
         });
 
