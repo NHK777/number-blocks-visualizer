@@ -347,6 +347,7 @@
                 <button id="rightLargerButton" class="clear-button font-bold text-white bg-blue-500 hover:bg-blue-700 hidden">右が大きい</button>
             </div>
             <div id="feedbackArea" class="mt-2 text-xl text-gray-700 h-10"></div>
+            <button id="nextQuestionButton" class="clear-button font-bold text-white bg-indigo-500 hover:bg-indigo-700 hidden mt-2">次の問題へ</button>
         </div>
         <div id="resultArea" class="mt-4 text-xl font-bold text-gray-800"></div>
     </div>
@@ -596,6 +597,7 @@
         const equalButton = document.getElementById('equalButton');
         const feedbackArea = document.getElementById('feedbackArea');
         const resultArea = document.getElementById('resultArea');
+        const nextQuestionButton = document.getElementById('nextQuestionButton'); // 追加
 
         // 既存の比較表示エリア (必要に応じて非表示にするため)
         const mainComparisonContainer = document.querySelector('.comparison-container'); // 既存の比較表示エリアの親
@@ -704,6 +706,7 @@
         // (generateQuestion, handleUserAnswer, endGame関数は後続のタスクで実装)
         // 問題生成と表示
         function generateQuestion() {
+            nextQuestionButton.classList.add('hidden'); // 「次の問題」ボタンが表示されていれば隠す
             if (!gameActive || currentQuestionNumber > TOTAL_QUESTIONS) {
                 endGame(); // ゲーム終了条件のチェック
                 return;
@@ -859,19 +862,28 @@
                 }
                 feedbackArea.textContent = feedbackText;
                 feedbackArea.className = 'mt-2 text-xl text-red-600 font-semibold h-10';
+                
+                // setTimeoutを削除し、代わりに「次の問題」ボタンを表示
+                nextQuestionButton.classList.remove('hidden'); 
+                // currentQuestionNumber++; // ← ★注意: numberのインクリメントはボタンが押された時に移動
             }
 
-            currentQuestionNumber++;
+            // currentQuestionNumber++; // ← ★注意: ここにあったインクリメントを正解時とボタンクリック時に分ける
+            // setTimeout(...) // ← ★注意: このsetTimeoutブロック全体を正解時のみに限定する
 
-            // 次の問題を生成するか、ゲームを終了する
-            // 少し遅延させてフィードバックを見せる（例: 1.5秒後）
-            setTimeout(() => {
-                if (currentQuestionNumber <= TOTAL_QUESTIONS) {
-                    generateQuestion();
-                } else {
-                    endGame();
-                }
-            }, 1500); // 1.5秒の遅延
+            if (userChoice === correctAnswer) { // 正解時のみ自動進行
+                currentQuestionNumber++; // 正解時はここでインクリメント
+                setTimeout(() => {
+                    if (currentQuestionNumber <= TOTAL_QUESTIONS) {
+                        generateQuestion();
+                    } else {
+                        endGame();
+                    }
+                }, 1500); // 1.5秒の遅延
+            } else {
+                // 不正解の場合は何もしない (ボタン待ち)
+                // currentQuestionNumber のインクリメントは nextQuestionButton のリスナーで行う
+            }
         }
 
         // ゲーム終了処理
@@ -908,6 +920,17 @@
         });
         rightLargerButton.addEventListener('click', () => {
             handleUserAnswer('right');
+        });
+
+        nextQuestionButton.addEventListener('click', () => {
+            currentQuestionNumber++; // 問題番号をここでインクリメント
+            if (currentQuestionNumber <= TOTAL_QUESTIONS) {
+                generateQuestion();
+            } else {
+                endGame();
+            }
+            nextQuestionButton.classList.add('hidden'); // ボタンを非表示にする
+            feedbackArea.textContent = ''; // フィードバックもクリアするのが自然か検討 (今回はクリアする)
         });
 
         // 初期表示設定: デフォルトは入力モード
