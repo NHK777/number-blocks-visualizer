@@ -285,6 +285,24 @@
         </div>
     </div>
 
+    <div id="gameModeContainer" class="page-container hidden mt-8 border-t border-gray-300 pt-8">
+        <h2 class="main-title font-bold text-gray-900">左右比較ゲーム</h2>
+        <div id="gameArea" class="comparison-container">
+            <!-- ゲームコンテンツはここにJSで挿入される -->
+        </div>
+        <div id="gameControls" class="mt-4 flex flex-col items-center gap-4">
+            <button id="startGameButton" class="clear-button font-bold text-white bg-green-500 hover:bg-green-700">ゲーム開始</button>
+            <div id="questionCounter" class="text-lg font-semibold text-gray-700"></div>
+            <div class="flex gap-4">
+                <button id="leftLargerButton" class="clear-button font-bold text-white bg-blue-500 hover:bg-blue-700 hidden">左が大きい</button>
+                <button id="equalButton" class="clear-button font-bold text-white bg-yellow-500 hover:bg-yellow-700 hidden">等しい</button>            
+                <button id="rightLargerButton" class="clear-button font-bold text-white bg-blue-500 hover:bg-blue-700 hidden">右が大きい</button>
+            </div>
+            <div id="feedbackArea" class="mt-2 text-md text-gray-700 h-8"></div>
+        </div>
+        <div id="resultArea" class="mt-4 text-xl font-bold text-gray-800"></div>
+    </div>
+
     <script>
         // 各桁のブロック生成に関する設定
         const DIGIT_CONFIG = {
@@ -514,6 +532,240 @@
             viewerRightElements.errorMessageElement.textContent = '';
             displayZeroInViewer(viewerRightElements); // 0表示ヘルパー関数を呼び出し
         });
+
+        // =============== ゲームモード用JavaScript ===============
+
+        // ゲームモードのHTML要素取得
+        const gameModeContainer = document.getElementById('gameModeContainer');
+        const startGameButton = document.getElementById('startGameButton');
+        const gameArea = document.getElementById('gameArea');
+        const questionCounter = document.getElementById('questionCounter');
+        const leftLargerButton = document.getElementById('leftLargerButton');
+        const rightLargerButton = document.getElementById('rightLargerButton');
+        const equalButton = document.getElementById('equalButton');
+        const feedbackArea = document.getElementById('feedbackArea');
+        const resultArea = document.getElementById('resultArea');
+
+        // 既存の比較表示エリア (必要に応じて非表示にするため)
+        const mainComparisonContainer = document.querySelector('.comparison-container'); // 既存の比較表示エリアの親
+        const clearAllMainButtonContainer = document.querySelector('.clear-button-container'); // 既存のクリアボタンの親
+
+        // ゲーム状態変数
+        let currentQuestionNumber = 0;
+        let score = 0;
+        let gameActive = false;
+        let leftValue = 0;
+        let rightValue = 0;
+
+        // ゲーム設定
+        const TOTAL_QUESTIONS = 10;
+
+        // ゲーム開始処理
+        function startGame() {
+            currentQuestionNumber = 1;
+            score = 0;
+            gameActive = true;
+
+            // 既存の比較ツールを非表示 (任意)
+            // 最初の comparison-container が対象となるように調整
+            const allComparisonContainers = document.querySelectorAll('.comparison-container');
+            if (allComparisonContainers.length > 0) {
+                allComparisonContainers[0].classList.add('hidden');
+            }
+            if (clearAllMainButtonContainer) clearAllMainButtonContainer.classList.add('hidden');
+            
+            // ゲームモードコンテナ表示
+            gameModeContainer.classList.remove('hidden');
+            startGameButton.classList.add('hidden'); // スタートボタンを隠す
+            leftLargerButton.classList.remove('hidden');
+            rightLargerButton.classList.remove('hidden');
+            equalButton.classList.remove('hidden');
+            resultArea.textContent = ''; // 前回の結果をクリア
+            feedbackArea.textContent = ''; // 前回のフィードバックをクリア
+
+            generateQuestion();
+        }
+
+        // イベントリスナー
+        startGameButton.addEventListener('click', startGame);
+
+        // (generateQuestion, handleUserAnswer, endGame関数は後続のタスクで実装)
+        // 問題生成と表示
+        function generateQuestion() {
+            if (!gameActive || currentQuestionNumber > TOTAL_QUESTIONS) {
+                endGame(); // ゲーム終了条件のチェック
+                return;
+            }
+
+            questionCounter.textContent = `問題 ${currentQuestionNumber}/${TOTAL_QUESTIONS}`;
+            feedbackArea.textContent = ''; // 前の問題のフィードバックをクリア
+
+            // 0から999までのランダムな数値を2つ生成
+            leftValue = getRandomInt(0, 999);
+            rightValue = getRandomInt(0, 999);
+
+            // 稀に同じ数値になる場合があるが、今回は許容する (equalButtonで対応)
+            // もし必ず異なる数値にしたい場合は、ここで再生成のロジックを追加
+
+            // gameArea をクリア
+            gameArea.innerHTML = '';
+
+            // 表示の準備 (左右どちらに数値を、どちらにブロックを表示するか)
+            // 例: 左に数値、右にブロック
+            const leftDisplayType = 'number';
+            const rightDisplayType = 'blocks'; // or 'number'
+
+            // 左側の表示を作成
+            const leftViewer = createGameDisplayColumn('left', leftValue, leftDisplayType);
+            gameArea.appendChild(leftViewer);
+
+            // 右側の表示を作成
+            const rightViewer = createGameDisplayColumn('right', rightValue, rightDisplayType);
+            gameArea.appendChild(rightViewer);
+        }
+
+        // ランダムな整数を生成するヘルパー関数
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // ゲーム用の表示カラムを作成する関数
+        function createGameDisplayColumn(side, value, displayType) {
+            const column = document.createElement('div');
+            column.className = 'viewer-column bg-white'; // 既存のスタイルを流用
+
+            const title = document.createElement('h2');
+            title.className = 'viewer-title font-bold text-gray-800';
+            title.textContent = `比較 ${side === 'left' ? '左' : '右'}`;
+            column.appendChild(title);
+
+            const displayArea = document.createElement('div');
+            displayArea.className = 'blocks-display-area bg-gray-50 min-h-[380px]'; // 高さを確保
+
+            if (displayType === 'number') {
+                const numberDisplay = document.createElement('div');
+                numberDisplay.className = 'text-6xl font-bold text-center flex items-center justify-center h-full';
+                numberDisplay.textContent = value.toString();
+                displayArea.appendChild(numberDisplay);
+            } else { // 'blocks'
+                // ブロック表示のためのコンテナ群
+                const hundredsContainer = document.createElement('div');
+                hundredsContainer.className = 'blocks-container';
+                const tensContainer = document.createElement('div');
+                tensContainer.className = 'blocks-container';
+                const onesContainer = document.createElement('div');
+                onesContainer.className = 'blocks-container';
+
+                // blocks-display-area の中に digit-group を模した構造を作る
+                const digitGroupHundreds = createDigitGroupElement('百の位', hundredsContainer, 'hundreds-col-width');
+                const digitGroupTens = createDigitGroupElement('十の位', tensContainer, 'tens-col-width');
+                const digitGroupOnes = createDigitGroupElement('一の位', onesContainer, 'ones-col-width');
+                
+                displayArea.appendChild(digitGroupHundreds);
+                displayArea.appendChild(digitGroupTens);
+                displayArea.appendChild(digitGroupOnes);
+
+                // 数値を分解
+                const hundreds = Math.floor(value / 100);
+                const tens = Math.floor((value % 100) / 10);
+                const ones = value % 10;
+
+                // 既存の generateDigitBlocks 関数を使ってブロックを生成
+                // generateDigitBlocks はグローバルにアクセス可能である前提
+                generateDigitBlocks(hundredsContainer, hundreds, 'hundreds');
+                generateDigitBlocks(tensContainer, tens, 'tens');
+                generateDigitBlocks(onesContainer, ones, 'ones');
+            }
+            column.appendChild(displayArea);
+            return column;
+        }
+
+        // digit-group 要素を作成するヘルパー関数
+        function createDigitGroupElement(labelText, blocksContainerElement, widthClass) {
+            const digitGroup = document.createElement('div');
+            digitGroup.className = `digit-group bg-gray-50 ${widthClass}`;
+
+            const label = document.createElement('span');
+            label.className = 'digit-label text-gray-600 text-center';
+            label.textContent = labelText;
+
+            digitGroup.appendChild(label);
+            digitGroup.appendChild(blocksContainerElement);
+            return digitGroup;
+        }
+
+
+        // --- ここから handleUserAnswer と endGame の実装が続く ---
+        // ユーザーの回答を処理
+        function handleUserAnswer(userChoice) {
+            if (!gameActive || currentQuestionNumber > TOTAL_QUESTIONS) return;
+
+            let correctAnswer;
+            if (leftValue > rightValue) {
+                correctAnswer = 'left';
+            } else if (rightValue > leftValue) {
+                correctAnswer = 'right';
+            } else {
+                correctAnswer = 'equal';
+            }
+
+            if (userChoice === correctAnswer) {
+                score++;
+                feedbackArea.textContent = '正解！';
+                feedbackArea.className = 'mt-2 text-md text-green-600 font-semibold h-8';
+            } else {
+                let feedbackText = '不正解。';
+                if (correctAnswer === 'left') {
+                    feedbackText += `正解は「左が大きい」でした (${leftValue} vs ${rightValue})。`;
+                } else if (correctAnswer === 'right') {
+                    feedbackText += `正解は「右が大きい」でした (${leftValue} vs ${rightValue})。`;
+                } else {
+                    feedbackText += `正解は「等しい」でした (${leftValue} vs ${rightValue})。`;
+                }
+                feedbackArea.textContent = feedbackText;
+                feedbackArea.className = 'mt-2 text-md text-red-600 font-semibold h-8';
+            }
+
+            currentQuestionNumber++;
+
+            // 次の問題を生成するか、ゲームを終了する
+            // 少し遅延させてフィードバックを見せる（例: 1.5秒後）
+            setTimeout(() => {
+                if (currentQuestionNumber <= TOTAL_QUESTIONS) {
+                    generateQuestion();
+                } else {
+                    endGame();
+                }
+            }, 1500); // 1.5秒の遅延
+        }
+
+        // ゲーム終了処理
+        function endGame() {
+            gameActive = false;
+            questionCounter.textContent = 'ゲーム終了！';
+            feedbackArea.textContent = ''; // 最終フィードバックは resultArea に
+
+            const percentage = TOTAL_QUESTIONS > 0 ? (score / TOTAL_QUESTIONS) * 100 : 0;
+            resultArea.textContent = `最終結果: ${score} / ${TOTAL_QUESTIONS} 正解 (${percentage.toFixed(0)}%)`;
+
+            // ボタンの表示制御
+            leftLargerButton.classList.add('hidden');
+            rightLargerButton.classList.add('hidden');
+            equalButton.classList.add('hidden');
+            startGameButton.textContent = 'もう一度プレイ'; // ボタンのテキストを変更
+            startGameButton.classList.remove('hidden'); // スタートボタンを再表示
+
+            // 元の比較ツールを再表示する場合
+            if (mainComparisonContainer) mainComparisonContainer.classList.remove('hidden');
+            if (clearAllMainButtonContainer) clearAllMainButtonContainer.classList.remove('hidden');
+        }
+
+        // 回答ボタンのイベントリスナー
+        leftLargerButton.addEventListener('click', () => handleUserAnswer('left'));
+        equalButton.addEventListener('click', () => handleUserAnswer('equal'));
+        rightLargerButton.addEventListener('click', () => handleUserAnswer('right'));
 
     </script>
 
